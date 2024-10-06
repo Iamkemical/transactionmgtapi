@@ -10,6 +10,10 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
+const swaggerSetup = require('./config/swagger')
+
+swaggerSetup(app); // setup Swagger documentation
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
