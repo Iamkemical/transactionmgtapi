@@ -8,7 +8,20 @@ const catchAsync = require('./middlewares/errorHandler');
 const AppError = require('./middlewares/appErrorHandler');
 const globalErrorHandler = require('./controllers/errorController');
 
+const cors = require('cors');
+
 const app = express();
+
+app.use(cors({
+  origin: '*', // Allow all origins, or specify your allowed origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use((req, res, next) => {
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 const swaggerSetup = require('./config/swagger')
 

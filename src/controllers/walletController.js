@@ -1,6 +1,6 @@
 const walletRepo = require('../db/models/wallet');
 const user = require('../db/models/user');
-const walletTransactionRepo = require('../db/models/wallettransaction');
+const walletTransactionRepo = require('../db/models/walletTransaction');
 
 const AppError = require('../middlewares/appErrorHandler');
 const { Op, QueryTypes, sequelize } = require('../config/database');
