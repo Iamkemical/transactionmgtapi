@@ -22,17 +22,38 @@ jobs:
         working-directory: ./src
         run: npm install
 
+      # Add a step to wait for database
+      - name: Wait for Database
+        run: |
+          timeout 30s bash -c "until nc -z $(echo $DATABASE_URL | sed -E 's/.*@([^:]+):([0-9]+).*/\1 \2/'); do sleep 1; done"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
       - name: Run migrations
         env: 
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: development
         working-directory: ./src
-        run: npx sequelize-cli db:migrate --env development --debug
-
+        run: |
+          npx sequelize-cli db:migrate \
+          --env development \
+          --debug \
+          --url "$DATABASE_URL"
+      
       - name: Seed the database
         env:
           DATABASE_URL: ${{secrets.DATABASE_URL}}
+          NODE_ENV: development
         working-directory: ./src
-        run: npx sequelize-cli db:seed:all --env development --debug
+        run: |
+          npx sequelize-cli db:seed:all \
+          --env development \
+          --debug \
+          --url "$DATABASE_URL"
+      
+      - name: Build project
+        working-directory: ./src
+        run: npm run build
 
       - name: Build project
         working-directory: ./src
