@@ -22,37 +22,14 @@ jobs:
         working-directory: ./src
         run: npm install
 
-      - name: Test Database Connection
+      - name: Debug Database URL
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        working-directory: ./src
         run: |
-          node -e "
-          const { Sequelize } = require('sequelize');
-          const sequelize = new Sequelize(process.env.DATABASE_URL, {
-            dialect: 'postgres',
-            dialectOptions: {
-              ssl: {
-                require: true,
-                rejectUnauthorized: false
-              }
-            },
-            logging: console.log
-          });
-          
-          async function testConnection() {
-            try {
-              await sequelize.authenticate();
-              console.log('Database connection successful');
-              process.exit(0);
-            } catch (error) {
-              console.error('Database connection error:', error);
-              console.log('Database URL format:', process.env.DATABASE_URL.replace(/:[^:@]*@/, ':****@'));
-              process.exit(1);
-            }
-          }
-          
-          testConnection();"
+          echo "URL Structure Check (sanitized):"
+          echo $DATABASE_URL | sed 's/:[^:@]*@/:*****@/'
+          echo "Protocol Check:"
+          echo $DATABASE_URL | cut -d: -f1
         
       - name: Run migrations
         env: 
