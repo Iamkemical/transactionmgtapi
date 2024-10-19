@@ -35,11 +35,14 @@ jobs:
         run: npm run build
 
       - name: Deploy to Render
-        uses: render-cloud/render-cloud-action@v1
+        uses: givemomentum/render-deploy@v1.6.1
         with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
           api_key: ${{ secrets.RENDER_API_KEY }}
-          project: TransactionMgtApi
-          environment: development
+          clear_cache: false
+          wait_deploy: false
+          github_deployment: false
+          deployment_environment: 'development'
 
       - name: Notify deployment success
         if: success()
