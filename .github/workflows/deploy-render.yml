@@ -1,0 +1,46 @@
+name: Render CI/CD Tool
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run migrations
+        env: 
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx sequelize-cli db:migrate
+
+      - name: Seed the database
+        env:
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+        run: npx sequelize-cli db:seed:all
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Render
+        uses: render-cloud/render-cloud-action@v1
+        with:
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          project: TransactionMgtApi
+          environment: development
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Deployment succeeded!"
