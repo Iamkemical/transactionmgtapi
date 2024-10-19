@@ -35,7 +35,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Render
-        uses: givemomentum/render-deploy@v1.8.0
+        uses: givemomentum/render-deploy@main
         with:
           service_id: ${{ secrets.RENDER_SERVICE_ID }}
           api_key: ${{ secrets.RENDER_API_KEY }}
