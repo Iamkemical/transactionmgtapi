@@ -21,14 +21,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./src
         run: npm install
-
-      # Add a step to wait for database
-      - name: Wait for Database
-        run: |
-          timeout 30s bash -c "until nc -z $(echo $DATABASE_URL | sed -E 's/.*@([^:]+):([0-9]+).*/\1 \2/'); do sleep 1; done"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      
+        
       - name: Run migrations
         env: 
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
