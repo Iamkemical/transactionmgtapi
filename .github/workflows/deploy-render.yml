@@ -1,0 +1,53 @@
+name: Render CI/CD Tool
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: npm install
+
+      - name: Run migrations
+        env: 
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        working-directory: ./src
+        run: npx sequelize-cli db:migrate --env development
+
+      - name: Seed the database
+        env:
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+        working-directory: ./src
+        run: npx sequelize-cli db:seed:all --env development
+
+      - name: Build project
+        working-directory: ./src
+        run: npm run build
+
+      - name: Deploy to Render
+        uses: givemomentum/render-deploy@main
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          clear_cache: false
+          wait_deploy: false
+          github_deployment: false
+          deployment_environment: 'development'
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "Deployment succeeded!"
