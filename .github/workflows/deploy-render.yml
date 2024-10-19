@@ -21,6 +21,38 @@ jobs:
       - name: Install dependencies
         working-directory: ./src
         run: npm install
+
+      - name: Test Database Connection
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        working-directory: ./src
+        run: |
+          node -e "
+          const { Sequelize } = require('sequelize');
+          const sequelize = new Sequelize(process.env.DATABASE_URL, {
+            dialect: 'postgres',
+            dialectOptions: {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false
+              }
+            },
+            logging: console.log
+          });
+          
+          async function testConnection() {
+            try {
+              await sequelize.authenticate();
+              console.log('Database connection successful');
+              process.exit(0);
+            } catch (error) {
+              console.error('Database connection error:', error);
+              console.log('Database URL format:', process.env.DATABASE_URL.replace(/:[^:@]*@/, ':****@'));
+              process.exit(1);
+            }
+          }
+          
+          testConnection();"
         
       - name: Run migrations
         env: 
