@@ -1,4 +1,4 @@
-name: Render CI/CD Tool 
+name: Render CI/CD Tool
 
 on:
   push:
@@ -30,11 +30,13 @@ jobs:
           echo $DATABASE_URL | sed 's/:[^:@]*@/:*****@/'
           echo "Protocol Check:"
           echo $DATABASE_URL | cut -d: -f1
-      
-      - name: Build project
-        working-directory: ./src
-        run: npm run build
 
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        working-directory: ./src
+        run: npx sequelize-cli db:migrate
+      
       - name: Build project
         working-directory: ./src
         run: npm run build
