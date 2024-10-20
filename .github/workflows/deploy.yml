@@ -30,28 +30,19 @@ jobs:
           echo $DATABASE_URL | sed 's/:[^:@]*@/:*****@/'
           echo "Protocol Check:"
           echo $DATABASE_URL | cut -d: -f1
-          
-      - name: Debug Secrets Availability
-        run: |
-          echo "Checking secret availability..."
 
-           # Check DATABASE_URL
-          if [ -n "${{ secrets.DATABASE_URL }}" ]; then
-            echo "✅ DATABASE_URL is available"
-            echo "URL format check:"
-            if [[ ${{ secrets.DATABASE_URL }} == postgresql://* ]]; then
-              echo "✅ URL format appears correct"
-            else
-              echo "❌ URL format might be incorrect"
-            fi
-          else
-            echo "❌ DATABASE_URL is NOT available"
-          fi
-      
-      - name: Build project
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         working-directory: ./src
-        run: npm run build
+        run: npx sequelize-cli db:migrate
 
+      - name: Seed the database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        working-directory: ./src
+        run: npx sequelize-cli db:seed:all
+      
       - name: Build project
         working-directory: ./src
         run: npm run build
