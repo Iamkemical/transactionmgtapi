@@ -13,7 +13,7 @@ module.exports = {
    pool: {
      max: 10,
      min: 0,
-     acquire: 60000, // Increased acquire time
+     acquire: 60000, // Increased acquire time 
      idle: 10000
   },
     logging: console.log, 
