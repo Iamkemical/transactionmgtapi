@@ -1,4 +1,4 @@
-require("dotenv").config({ path: `${process.cwd()}/.env` });
+require("dotenv").config();
 
 module.exports = {
   development: {
@@ -10,13 +10,17 @@ module.exports = {
         rejectUnauthorized: false, // Disable SSL certificate validation (use with caution)
       },
     },
-   pool: {
-     max: 10,
-     min: 0,
-     acquire: 60000, // Increased acquire time 
-     idle: 10000
-  },
-    logging: console.log, 
+    logging: console.log,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+      handleDisconnects: true,
+    },
+    retry: {
+      max: 3,
+    },
     seederStorage: "sequelize",
   },
   test: {
