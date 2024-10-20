@@ -41,7 +41,7 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         working-directory: ./src
-        run: npx sequelize-cli db:seed:all
+        run: npx sequelize-cli db:seed:all --debug
       
       - name: Build project
         working-directory: ./src
