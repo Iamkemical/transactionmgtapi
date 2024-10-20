@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `${process.cwd()}/.env` });
 
 module.exports = {
   development: {
