@@ -10,12 +10,12 @@ module.exports = {
         rejectUnauthorized: false, // Disable SSL certificate validation (use with caution)
       },
     },
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
+   pool: {
+     max: 10,
+     min: 0,
+     acquire: 60000, // Increased acquire time
+     idle: 10000
+  },
     logging: console.log, 
     seederStorage: "sequelize",
   },
